@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 6000;
+const port = process.env.PORT || 8000;
 const path = require("path");
 const publicDirectory = path.join(__dirname, "../public");
 
