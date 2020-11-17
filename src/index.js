@@ -19,10 +19,10 @@ io.on("connection", (socket) => {
 
   socket.emit("messageReceived", text); // to sent an event- name of the event
 
-  socket.on("message", (text) => {
+  socket.on("submit", (text) => {
     // socket.emit("countUpdated", count); // will only update to single connection
     console.log(text);
-    io.emit("message", text);
+    io.emit("submitted_message", text);
   });
 });
 

@@ -7,9 +7,17 @@
 </head>
 <body>
     <h1>CHAT APP</h1>
-    <p>Count</p>
-    <h2 id='text-d'></h2>
-    <input type="text" id='input'>
+    <form id="myForm">
+        <label>
+            Name:
+        </label>
+        <input type="text" id='input-name'>
+        <label>
+            Message
+        </label>
+        <input type="text" id='input-message'>
+        <input type="submit">
+    </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.js"></script>
 </body>
