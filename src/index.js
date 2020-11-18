@@ -17,12 +17,14 @@ const text = "Welcome!";
 io.on("connection", (socket) => {
   console.log("new web socket connection");
 
-  socket.emit("messageReceived", text); // to sent an event- name of the event
-
+  socket.emit("message", text); // to sent an event- name of the event
+  socket.broadcast.emit("message", "A new user has joined");
   socket.on("submit", (text) => {
-    // socket.emit("countUpdated", count); // will only update to single connection
     console.log(text);
     io.emit("submitted_message", text);
+  });
+  socket.on("disconnect", () => {
+    io.emit("message", "A user has left");
   });
 });
 

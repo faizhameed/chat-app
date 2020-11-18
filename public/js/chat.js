@@ -1,18 +1,12 @@
 const socket = io();
 
-socket.on("messageReceived", (message) => {
+socket.on("message", (message) => {
   console.log("Input message", message);
 });
 
 socket.on("submitted_message", (message) => {
   console.log(message);
 });
-
-// document.querySelector("#input").addEventListener("change", () => {
-//   const text = document.getElementById("input").value;
-//   console.log("input is changed", text);
-//   socket.emit("message", text);
-// });
 
 document.querySelector("#myForm").addEventListener("submit", function (e) {
   e.preventDefault(); //stop form from submitting
