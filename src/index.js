@@ -19,12 +19,21 @@ io.on("connection", (socket) => {
 
   socket.emit("message", text); // to sent an event- name of the event
   socket.broadcast.emit("message", "A new user has joined");
+
   socket.on("submit", (text) => {
     console.log(text);
     io.emit("submitted_message", text);
   });
+
+  socket.on("sendLocation", (coords) => {
+    io.emit(
+      "message",
+      `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
+    );
+  });
+
   socket.on("disconnect", () => {
-    io.emit("message", "A user has left");
+    socket.broadcast.emit("message", "A user has left");
   });
 });
 
