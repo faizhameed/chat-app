@@ -12,10 +12,19 @@ document.querySelector("#myForm").addEventListener("submit", function (e) {
   e.preventDefault(); //stop form from submitting
   const name = document.getElementById("input-name").value;
   const message = document.getElementById("input-message").value;
-  socket.emit("submit", {
-    name,
-    message,
-  });
+  socket.emit(
+    "submit",
+    {
+      name,
+      message,
+    },
+    (error) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("Message was delivered!!");
+    }
+  );
 });
 
 document.querySelector("#send-location").addEventListener("click", () => {
