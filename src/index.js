@@ -30,11 +30,12 @@ io.on("connection", (socket) => {
     cb();
   });
 
-  socket.on("sendLocation", (coords) => {
+  socket.on("sendLocation", (coords, cb) => {
     io.emit(
       "message",
       `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
     );
+    cb("Location Shared");
   });
 
   socket.on("disconnect", () => {
