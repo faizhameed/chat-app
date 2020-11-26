@@ -3,6 +3,10 @@ const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
 const Filter = require("bad-words");
+const {
+  generateMessage,
+  generateLocationMessage,
+} = require("./utils/messages");
 
 const app = express();
 const server = http.createServer(app);
@@ -13,13 +17,11 @@ const publicDirectory = path.join(__dirname, "../public");
 
 app.use(express.static(publicDirectory));
 
-const text = "Welcome!";
-
 io.on("connection", (socket) => {
   console.log("new web socket connection");
 
-  socket.emit("message", text); // to sent an event- name of the event
-  socket.broadcast.emit("message", "A new user has joined");
+  socket.emit("message", generateMessage("Welcome!")); // to sent an event- name of the event
+  socket.broadcast.emit("message", generateMessage("A new user has joined"));
 
   socket.on("submit", (text, cb) => {
     const filter = new Filter();
@@ -33,13 +35,15 @@ io.on("connection", (socket) => {
   socket.on("sendLocation", (coords, cb) => {
     io.emit(
       "locationMessage",
-      `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
+      generateLocationMessage(
+        `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
+      )
     );
     cb("Location Shared");
   });
 
   socket.on("disconnect", () => {
-    socket.broadcast.emit("message", "A user has left");
+    socket.broadcast.emit("message", generateMessage("A user has left"));
   });
 });
 
