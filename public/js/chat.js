@@ -5,7 +5,6 @@ const socket = io();
 const $messageForm = document.querySelector("#myForm");
 const $sendLocationBtn = document.querySelector("#send-location");
 const $messages = document.querySelector("#messages");
-const $location = document.querySelector("#location");
 
 //Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
@@ -22,6 +21,11 @@ socket.on("message", (message) => {
 
 socket.on("submitted_message", (message) => {
   console.log(message);
+  const html = Mustache.render(messageTemplate, {
+    message: message.name + " says " + message.message,
+    createdAt: moment(message.createdAt).format("h:mm a"),
+  });
+  $messages.insertAdjacentHTML("beforeend", html);
 });
 
 socket.on("locationMessage", (url) => {
@@ -29,7 +33,7 @@ socket.on("locationMessage", (url) => {
     url: url.url,
     createdAt: moment(url.createdAt).format("h:mm a"),
   });
-  $location.insertAdjacentHTML("beforeend", html);
+  $messages.insertAdjacentHTML("beforeend", html);
 });
 $messageForm.addEventListener("submit", function (e) {
   e.preventDefault(); //stop form from submitting
