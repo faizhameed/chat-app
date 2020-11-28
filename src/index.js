@@ -20,8 +20,14 @@ app.use(express.static(publicDirectory));
 io.on("connection", (socket) => {
   console.log("new web socket connection");
 
-  socket.emit("message", generateMessage("Welcome!")); // to sent an event- name of the event
-  socket.broadcast.emit("message", generateMessage("A new user has joined"));
+  socket.on("join", ({ username, room }) => {
+    socket.join(room); //emit events specifically to that room
+
+    socket.emit("message", generateMessage("Welcome!")); // to sent an event- name of the event
+    socket.broadcast
+      .to(room)
+      .emit("message", generateMessage(`${username} has joined!!`));
+  });
 
   socket.on("submit", (text, cb) => {
     const filter = new Filter();
