@@ -22,7 +22,7 @@ socket.on("message", (message) => {
 socket.on("submitted_message", (message) => {
   console.log(message);
   const html = Mustache.render(messageTemplate, {
-    message: message.name + " says " + message.message,
+    message: message.message,
     createdAt: moment(message.createdAt).format("h:mm a"),
   });
   $messages.insertAdjacentHTML("beforeend", html);
@@ -37,21 +37,17 @@ socket.on("locationMessage", (url) => {
 });
 $messageForm.addEventListener("submit", function (e) {
   e.preventDefault(); //stop form from submitting
-  const $name = document.getElementById("input-name");
   const $message = document.getElementById("input-message");
   const $submitButton = document.getElementById("submit-btn");
   $submitButton.setAttribute("disabled", "disabled");
   socket.emit(
     "submit",
     {
-      name: $name.value,
       message: $message.value,
     },
     (error) => {
       $submitButton.removeAttribute("disabled");
-      $name.value = "";
       $message.value = "";
-      $name.focus();
       if (error) {
         return console.log(error);
       }
