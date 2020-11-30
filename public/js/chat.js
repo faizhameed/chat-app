@@ -115,7 +115,6 @@ $sendLocationBtn.addEventListener("click", () => {
       (message) => {
         //enable
         $sendLocationBtn.removeAttribute("disabled");
-        console.log(message);
       }
     );
   });
