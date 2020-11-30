@@ -8,6 +8,13 @@ const {
   generateLocationMessage,
 } = require("./utils/messages");
 
+const {
+  addUser,
+  getUser,
+  getUsersInRoom,
+  removeUser,
+} = require("./utils/users");
+
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -20,13 +27,21 @@ app.use(express.static(publicDirectory));
 io.on("connection", (socket) => {
   console.log("new web socket connection");
 
-  socket.on("join", ({ username, room }) => {
-    socket.join(room); //emit events specifically to that room
+  socket.on("join", ({ username, room }, callback) => {
+    const { error, user } = addUser({ id: socket.id, username, room });
+
+    if (error) {
+      return callback(error);
+    }
+
+    socket.join(user.room); //emit events specifically to that room
 
     socket.emit("message", generateMessage("Welcome!")); // to sent an event- name of the event
     socket.broadcast
-      .to(room)
+      .to(user.room)
       .emit("message", generateMessage(`${username} has joined!!`));
+
+    callback();
   });
 
   socket.on("submit", (text, cb) => {
@@ -34,12 +49,14 @@ io.on("connection", (socket) => {
     if (filter.isProfane(text.message)) {
       return cb("Profanity is not allowed!");
     }
-    io.emit("submitted_message", text);
+    const { room } = getUser(socket.id);
+    io.to(room).emit("submitted_message", text);
     cb();
   });
 
   socket.on("sendLocation", (coords, cb) => {
-    io.emit(
+    const { room } = getUser(socket.id);
+    io.to(room).emit(
       "locationMessage",
       generateLocationMessage(
         `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
@@ -49,7 +66,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    socket.broadcast.emit("message", generateMessage("A user has left"));
+    const user = removeUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit(
+        "message",
+        generateMessage(`${user.username} has left!`)
+      );
+    }
   });
 });
 
